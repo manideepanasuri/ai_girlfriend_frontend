@@ -1,9 +1,8 @@
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router";
-import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Signup from "./pages/Signup";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import {refresh} from "./store/features/userdata"
 
@@ -16,6 +15,8 @@ function App() {
       dispatch(refresh());
     }
   },[])
+
+  
   return (
     <BrowserRouter>
       <Routes>

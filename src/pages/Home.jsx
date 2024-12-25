@@ -91,8 +91,11 @@ export default function Home() {
     }
   
   }, [inputref])
+
+
+
   return (
-    <div className=" relative overflow-y-auto overflow-x-hidden">
+    <div  className=" relative overflow-y-auto overflow-x-hidden">
       <Navbar />
       <div className="flex flex-col justify-end items-center ">
         <div className="overflow-y-scroll flex flex-col w-full justify-center items-center overflow-x-hidden no-scrollbar">
@@ -116,7 +119,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <form
+        <div
           className="flex w-screen justify-center rounded-md border-0 items-center fixed bottom-0 md:w-[60vw] p-2 pb-3 bg-base-100"
           ref={inputref}
           onSubmit={handleSubmit}
@@ -130,10 +133,10 @@ export default function Home() {
             autoFocus={true}
             onBlur={({ target }) => target.focus()}
           />
-          <button data-theme="light" type="submit" className="btn mx-2">
+          <button data-theme="light" onClick={handleSubmit} className="btn mx-2">
             Send
           </button>
-        </form>
+        </div>
       </div>
       <div className="toast toast-top toast-center z-20">
         {connectionStatus == "Connecting" ? (

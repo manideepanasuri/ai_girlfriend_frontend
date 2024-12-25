@@ -83,13 +83,23 @@ export default function Home() {
       sendJsonMessage({ clearchat: true, message: {} });
     }
   }, [clearchat]);
-
+  const inputref=useRef(null);
+  const [height,setHeight]=useState(0);
+  useEffect(() => {
+    if (inputref.current) {
+      setHeight(inputref.current.offsetHeight);
+    }
+  
+  }, [inputref])
+  
   return (
-    <div className="h-full relative ">
+    <div className="h-full relative overflow-y-auto overflow-x-hidden">
       <Navbar />
-      <div className="flex flex-col justify-end items-center h-[100%]">
+      <div className="flex flex-col justify-end items-center ">
         <div className="overflow-y-scroll flex flex-col w-full justify-center items-center overflow-x-hidden no-scrollbar">
-          <div className=" md:w-[60vw] w-full h-full px-4 ">
+          <div className={` md:w-[60vw] w-full  px-4 `}
+          style={{ paddingBottom: `${height}px` }}
+          >
             {messageHistory.map((val, index) => (
               <Chatbuble key={index} role={val.role} message={val.parts} />
             ))}
@@ -108,7 +118,8 @@ export default function Home() {
           </div>
         </div>
         <form
-          className="flex w-full justify-center items-center sticky bottom-0 md:w-[60vw] m-2"
+          className="flex w-full justify-center rounded-md border-0 items-center fixed bottom-0 md:w-[60vw] p-2 pb-3 bg-base-100"
+          ref={inputref}
           onSubmit={handleSubmit}
         >
           <input
@@ -117,6 +128,8 @@ export default function Home() {
             placeholder="Type here"
             className="input input-bordered w-full mx-2"
             data-theme="light"
+            autoFocus={true}
+            onBlur={({ target }) => target.focus()}
           />
           <button data-theme="light" type="submit" className="btn mx-2">
             Send

@@ -15,8 +15,6 @@ export const loginUser=createAsyncThunk(
     const response=await axios.request(config);
     let data=response.data;
     const decode=jwtDecode(data.access);
-    localStorage.setItem('access',data.access)
-    localStorage.setItem('refresh',data.refresh)
     data={...data,username:decode.username,email:decode.email};
     return data;
   }
@@ -34,7 +32,6 @@ export const createUser=createAsyncThunk(
       data : JSON.stringify(userdetails)
     };
     const response=await axios.request(config);
-    console.log(response)
     let data=response.data;
     const decode=jwtDecode(data.access);
     localStorage.setItem('access',data.access)
@@ -56,10 +53,10 @@ export const refresh=createAsyncThunk(
       data : JSON.stringify({refresh})
     };
     const response=await axios.request(config);
+    
     let data=response.data;
+    console.log(data.access);
     const decode=jwtDecode(data.access);
-    localStorage.setItem('access',data.access)
-    localStorage.setItem('refresh',data.refresh)
     data={...data,username:decode.username,email:decode.email};
     return data;
   }
@@ -103,7 +100,7 @@ const user=createSlice({
       state.email=action.payload.email;
       state.error=null;
       
-      localStorage.setItem('access',action.payloadaccess)
+      localStorage.setItem('access',action.payload.access)
       localStorage.setItem('refresh',action.payload.refresh)
     })
     .addCase(loginUser.rejected,(state,action)=>{
@@ -121,7 +118,7 @@ const user=createSlice({
       state.username=action.payload.username;
       state.email=action.payload.email;
       state.error=null;
-      localStorage.setItem('access',action.payloadaccess)
+      localStorage.setItem('access',action.payload.access)
       localStorage.setItem('refresh',action.payload.refresh)
     })
     .addCase(createUser.pending,(state)=>{
@@ -145,7 +142,7 @@ const user=createSlice({
       state.username=action.payload.username;
       state.email=action.payload.email;
       state.error=null;
-      localStorage.setItem('access',action.payloadaccess)
+      localStorage.setItem('access',action.payload.access)
       localStorage.setItem('refresh',action.payload.refresh)
     })
     .addCase(refresh.pending,(state)=>{

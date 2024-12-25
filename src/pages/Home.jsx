@@ -91,9 +91,8 @@ export default function Home() {
     }
   
   }, [inputref])
-  
   return (
-    <div className="h-full relative overflow-y-auto overflow-x-hidden">
+    <div className=" relative overflow-y-auto overflow-x-hidden">
       <Navbar />
       <div className="flex flex-col justify-end items-center ">
         <div className="overflow-y-scroll flex flex-col w-full justify-center items-center overflow-x-hidden no-scrollbar">
@@ -118,7 +117,7 @@ export default function Home() {
           </div>
         </div>
         <form
-          className="flex w-full justify-center rounded-md border-0 items-center fixed bottom-0 md:w-[60vw] p-2 pb-3 bg-base-100"
+          className="flex w-screen justify-center rounded-md border-0 items-center fixed bottom-0 md:w-[60vw] p-2 pb-3 bg-base-100"
           ref={inputref}
           onSubmit={handleSubmit}
         >

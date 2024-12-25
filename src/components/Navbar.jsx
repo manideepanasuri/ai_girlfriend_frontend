@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from "react-router";
 import boy from "../assets/boy.png";
 import { useDispatch, useSelector } from "react-redux";
 import { setToTrue } from "../store/features/clearChat";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { logout } from "../store/features/userdata";
 
 export default function Navbar() {
@@ -13,8 +13,18 @@ export default function Navbar() {
   }
   const navigate=useNavigate();
   const user=useSelector((state)=>state.user);
+  const navbarRef=useRef(null);
+  const [height,setHeight]=useState(0);
+  useEffect(() => {
+    if (navbarRef.current) {
+      setHeight(navbarRef.current.offsetHeight);
+    }
+  
+  }, [navbarRef])
   return (
-    <div className="navbar bg-base-100 rounded-md sticky top-0 z-10 w-screen ">
+    <>
+    <div className="bg-base-100" style={{ height: `${height}px` }}></div>
+    <div className="navbar bg-base-100 rounded-md fixed top-0 z-10 w-screen " ref={navbarRef}>
       <div className="flex-1">
         <NavLink to="/" className="btn btn-ghost text-xl">
           GirlFriend
@@ -59,5 +69,6 @@ export default function Navbar() {
         </ul>
       </div>
     </div>
+    </>
   );
 }

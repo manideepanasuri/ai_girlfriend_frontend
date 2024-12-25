@@ -119,7 +119,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div
+        <form
           className="flex w-screen justify-center rounded-md border-0 items-center fixed bottom-0 md:w-[60vw] p-2 pb-3 bg-base-100"
           ref={inputref}
           onSubmit={handleSubmit}
@@ -133,10 +133,10 @@ export default function Home() {
             autoFocus={true}
             onBlur={({ target }) => target.focus()}
           />
-          <button data-theme="light" onClick={handleSubmit} className="btn mx-2">
+          <button data-theme="light" type="submit" className="btn mx-2">
             Send
           </button>
-        </div>
+        </form>
       </div>
       <div className="toast toast-top toast-center z-20">
         {connectionStatus == "Connecting" ? (

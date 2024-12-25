@@ -1,0 +1,152 @@
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router";
+import useWebSocket, { ReadyState } from "react-use-websocket";
+import Chatbuble from "../components/Chatbuble";
+import { setToFalse } from "../store/features/clearChat";
+import Navbar from "../components/Navbar";
+
+export default function Home() {
+  const user = useSelector((state) => state.user);
+  const clearchat = useSelector((state) => state.clearchat);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // Redirect to login if the user is not logged in
+  useEffect(() => {
+    if (!user.username) {
+      navigate("/login");
+    }
+  }, [navigate, user]);
+  const msgref = useRef(null);
+  const scrollRef = useRef(null); // Ref for the last message
+  const [messageHistory, setMessageHistory] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [currMsg, setCurrMsg] = useState(null);
+  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
+    import.meta.env.VITE_BACKEND_HOST + `ws/chat/`,
+    {
+      queryParams: { token: user.access },
+      shouldReconnect: true,
+      reconnectAttempts:10,
+      reconnectInterval:1000,
+    }
+  );
+
+  const connectionStatus = {
+    [ReadyState.CONNECTING]: "Connecting",
+    [ReadyState.OPEN]: "Open",
+    [ReadyState.CLOSING]: "Closing",
+    [ReadyState.CLOSED]: "Closed",
+    [ReadyState.UNINSTANTIATED]: "Uninstantiated",
+  }[readyState];
+
+  // Handle incoming WebSocket messages
+  useEffect(() => {
+    if (lastJsonMessage !== null) {
+      if (lastJsonMessage.length > 2) {
+        setMessageHistory([]);
+      }
+      if (lastJsonMessage.length == 0 && clearchat.value) {
+        setMessageHistory([]);
+        dispatch(setToFalse());
+      }
+      setMessageHistory((prev) => prev.concat(lastJsonMessage));
+      setLoading(false);
+      setCurrMsg(null);
+    }
+  }, [lastJsonMessage]);
+
+  // Automatically scroll to the last message
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messageHistory, loading]); // Trigger when `messageHistory` updates
+
+  // Handle form submission
+  function handleSubmit(e) {
+    e.preventDefault();
+    if(connectionStatus!="Open"){return;}
+    const msg = msgref.current.value;
+    if(!msg){return;}
+    setLoading(true);
+    setCurrMsg({ role: "user", parts: msg });
+    if (msg) {
+      sendJsonMessage({ message: msg });
+      msgref.current.value = ""; // Clear the input field
+    }
+  }
+
+  useEffect(() => {
+    if (clearchat.value) {
+      sendJsonMessage({ clearchat: true, message: {} });
+    }
+  }, [clearchat]);
+
+  return (
+    <div className="h-full relative ">
+      <Navbar />
+      <div className="flex flex-col justify-end items-center h-[100%]">
+        <div className="overflow-y-scroll flex flex-col w-full justify-center items-center overflow-x-hidden no-scrollbar">
+          <div className=" md:w-[60vw] w-full h-full px-4 ">
+            {messageHistory.map((val, index) => (
+              <Chatbuble key={index} role={val.role} message={val.parts} />
+            ))}
+            {currMsg ? (
+              <Chatbuble role={currMsg.role} message={currMsg.parts} />
+            ) : (
+              <></>
+            )}
+            <div ref={scrollRef} className="flex justify-start">
+              <span
+                className={
+                  "loading loading-dots loading-lg " + (loading ? "" : "hidden")
+                }
+              ></span>
+            </div>
+          </div>
+        </div>
+        <form
+          className="flex w-full justify-center items-center sticky bottom-0 md:w-[60vw] m-2"
+          onSubmit={handleSubmit}
+        >
+          <input
+            type="text"
+            ref={msgref}
+            placeholder="Type here"
+            className="input input-bordered w-full mx-2"
+            data-theme="light"
+          />
+          <button data-theme="light" type="submit" className="btn mx-2">
+            Send
+          </button>
+        </form>
+      </div>
+      <div className="toast toast-top toast-center z-20">
+        {connectionStatus == "Connecting" ? (
+          <div className="alert alert-warning">
+            <span>
+              Connecting please wait{" "}
+              {" "}
+            </span>
+            <span className="loading loading-dots loading-sm"></span>
+          </div>
+        ) : (
+          <></>
+        )}
+        {connectionStatus == "Closed"||connectionStatus=="Closing" ? (
+          <div className="alert alert-error">
+            <span>
+              Disconnected{" "}
+              {" "}
+            </span>
+            
+          </div>
+        ) : (
+          <></>
+        )}
+      </div>
+    </div>
+  );
+}

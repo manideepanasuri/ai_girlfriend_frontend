@@ -18,14 +18,11 @@ function App() {
   },[])
   return (
     <BrowserRouter>
-    <div className=" block h-screen w-screen overflow-x-hidden ">
-      
       <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='/login' element={<Login/>}/>
         <Route path='/signup' element={<Signup/>}/>
       </Routes>
-    </div>
     </BrowserRouter>
   );
 }

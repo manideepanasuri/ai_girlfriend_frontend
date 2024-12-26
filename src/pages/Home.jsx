@@ -95,12 +95,12 @@ export default function Home() {
 
 
   return (
-    <div  className=" relative overflow-y-auto overflow-x-hidden">
+    <div  className=" relative overflow-y-scroll overflow-x-hidden ">
       <Navbar />
-      <div className="flex flex-col justify-end items-center ">
-        <div className="overflow-y-scroll flex flex-col w-full justify-center items-center overflow-x-hidden no-scrollbar">
-          <div className={` md:w-[60vw] w-full  px-4 `}
-          style={{ paddingBottom: `${height}px` }}
+      <div className="flex flex-col justify-end items-center relative   ">
+        <div className=" flex flex-col justify-end w-full  items-center overflow-x-hidden no-scrollbar " style={{ paddingBottom: `${height}px`,height:`${window.innerHeight-height}px` }}>
+          <div className={` md:w-[60vw] w-full  px-4 bottom-0  overflow-y-scroll`}
+          
           >
             {messageHistory.map((val, index) => (
               <Chatbuble key={index} role={val.role} message={val.parts} />
@@ -131,7 +131,6 @@ export default function Home() {
             className="input input-bordered w-full mx-2"
             data-theme="light"
             autoFocus={true}
-            onBlur={({ target }) => target.focus()}
           />
           <button data-theme="light" type="submit" className="btn mx-2">
             Send
